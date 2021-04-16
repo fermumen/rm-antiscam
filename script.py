@@ -10,6 +10,18 @@ import pandas as pd
 import requests
 import shortuuid
 
+'''
+For reprodcuibility, could put:
+master_seed = 123
+random.seed(master_seed)
+
+also remember you have:
+numpy.random.seed()
+numpy.random.randint()
+
+Possibly also some redundancy between randint and randrange depending on your exact use-case
+https://stackoverflow.com/questions/3540431/what-is-the-difference-between-random-randint-and-randrange
+'''
 
 def random_date():
     """
@@ -23,14 +35,22 @@ def random_date():
     random_second = randrange(int_delta)
     return start + timedelta(seconds=random_second)
 
-
+'''
+Obligatory point on doc-strings - description, inputs, outputs (possibly with types if you're being belt and braces) is (I think)
+the standard. Obvs this is practice code, just thought I'd point it out.
+''' 
 
 def generate_card(type):
     """
     Prefill some values based on the card type
     """
     card_types = ["americanexpress","visa13", "visa16","mastercard","discover"]
-
+    
+    '''
+    My preference is normally to define all the functions in the scope of the script, rather than within
+    the scope of other functions - makes debugging a bit easier and you can then re-use them elsewhere too
+    ''' 
+    
     def prefill(t):
         # typical number of digits in credit card
         def_length = 16
@@ -133,9 +153,23 @@ def create_url(params, service = "loading.php?"):
     url_parts[4] = urlencode(query)
     return urlparse.urlunparse(url_parts)
 
+'''
+I'd move these 3 lines below loging_cards, so that all your function definitions come first
+Even better, place your desired calls inside an:
 
+if __name__ == "__main__":
+    some_unit_tests()
+    
+That way you can set up unit tests inside script.py which are only run if you actually launch script.py,
+(i.e in which case __name__ does indeed == "__main__") and have actual "real life" calls to your functions in another .py file.
+'''
 
 post_codes = pd.read_csv("postcodes.csv")
+
+'''
+Generally, {...a, b..} is better than {...a,b...} from a readability perspective
+For example {...a=5, b=6...} trumps {...a = 5 , b = 6...} or {...a=5,b=6..}
+'''
 post_codes.pcd[(randint(0,len(post_codes.pcd)))]
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"}
 
@@ -145,7 +179,13 @@ def loging_cards():
         first_name = names.get_first_name()
         last_name = names.get_last_name()
         full_name = first_name + ' ' + last_name
+        
+        '''
+        Something I'm very bad at doing but I believe is convetion is to use '...' for chars and "..." for strings
+        Helps a bit with readability and spotting errors. 
+        '''
         email =  first_name.lower() + '0' + str(randint(0,9)) +'@gmail.com'
+        
         phone = "07" + str(randint(10000000,99999999))
         street_name = names.get_last_name() + ' St'
         dob = random_date().strftime("%m/%d/%Y")
